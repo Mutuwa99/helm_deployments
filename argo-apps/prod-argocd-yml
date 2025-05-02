@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/Mutuwa99/minikube-cluster.git'
+    repoURL: 'https://github.com/Mutuwa99/helm_deployments.git'
     targetRevision: main
     path: myapp
     helm:

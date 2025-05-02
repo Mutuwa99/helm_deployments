@@ -11,6 +11,11 @@ metadata:
     environment: {{ .Values.env | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   selector:
     matchLabels:
       app: {{ include "myapp.name" . }}
