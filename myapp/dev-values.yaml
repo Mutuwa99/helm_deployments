@@ -1,0 +1,17 @@
+# values-dev.yaml
+replicaCount: 6
+
+
+namespace: dev
+
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  targetPort: 80
+  port: 80
+
+env: dev

@@ -1,0 +1,17 @@
+# values-dev.yaml
+replicaCount: 4
+
+
+namespace: prod
+
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  targetPort: 80
+  port: 80
+
+env: prod
