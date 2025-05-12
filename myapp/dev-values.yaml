@@ -1,17 +1,27 @@
 # values-dev.yaml
-replicaCount: 6
 
+namespace: dev                      # The Kubernetes namespace where the resources will be deployed
 
-namespace: dev
+replicaCount: 6                     # Number of pod replicas to run
+
+env: dev                            # Environment label (used for tagging pods, e.g., dev, staging, prod)
 
 image:
-  repository: nginx
-  tag: latest
-  pullPolicy: IfNotPresent
+  repository: nginx                 # Docker image repository (in this case, the official Nginx image)
+  tag: latest                       # Image tag/version to use (using 'latest' for dev environment)
+  pullPolicy: IfNotPresent          # Policy for pulling images (Only pulls if not already present on node)
 
 service:
-  type: ClusterIP
+  type: NodePort
   targetPort: 80
   port: 80
+                
 
-env: dev
+resources:
+  limits:
+    cpu: "500m"                     # Maximum amount of CPU the container can use (500 millicores = 0.5 cores)
+    memory: "256Mi"                 # Maximum memory the container can use (256 MiB)
+
+  requests:
+    cpu: "250m"                     # Minimum amount of CPU requested (used for scheduling)
+    memory: "128Mi"                 # Minimum memory requested (used for scheduling)

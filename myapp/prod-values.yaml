@@ -15,3 +15,12 @@ service:
   port: 80
 
 env: prod
+
+resources:
+  limits:
+    cpu: "500m"                     # Maximum amount of CPU the container can use (500 millicores = 0.5 cores)
+    memory: "256Mi"                 # Maximum memory the container can use (256 MiB)
+
+  requests:
+    cpu: "250m"                     # Minimum amount of CPU requested (used for scheduling)
+    memory: "128Mi"                 # Minimum memory requested (used for scheduling)

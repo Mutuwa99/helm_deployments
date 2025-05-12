@@ -1,35 +1,48 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1                                 # Specifies the API version for Deployment
+kind: Deployment                                    # Declares this manifest as a Deployment
 metadata:
-  name: {{ include "myapp.fullname" . }}
-  namespace: {{ .Values.namespace }}
-  labels:
-    app: {{ include "myapp.name" . }}
-    chart: {{ include "myapp.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    environment: {{ .Values.env | quote }}
+  name: {{ include "myapp.fullname" . }}            # The full name of the deployment (typically release-name + app name)
+  namespace: {{ .Values.namespace }}                # Namespace to deploy the resources into, from values.yaml
+  labels:                                           # Labels help identify and group resources
+    app: {{ include "myapp.name" . }}               # App label, typically the application name
+    chart: {{ include "myapp.chart" . }}            # Helm chart version label
+    release: {{ .Release.Name }}                    # Helm release name
+    heritage: {{ .Release.Service }}                # Helm service label (used internally by Helm)
+    environment: {{ .Values.env | quote }}          # Custom label to identify the environment (e.g., "dev")
+
 spec:
-  replicas: {{ .Values.replicaCount }}
-  strategy:
-    type: RollingUpdate
+  replicas: {{ .Values.replicaCount }}              # Number of pod replicas to run, defined in values.yaml
+  strategy:                                         # Deployment update strategy
+    type: RollingUpdate                             # Use rolling updates for zero-downtime deployments
     rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-  selector:
+      maxSurge: 25%                                 # Allow 25% more pods than desired during update
+      maxUnavailable: 25%                           # Allow up to 25% of pods to be unavailable during update
+
+  selector:                                         # How the Deployment finds which Pods to manage
     matchLabels:
-      app: {{ include "myapp.name" . }}
-      release: {{ .Release.Name }}
-  template:
+      app: {{ include "myapp.name" . }}             # Must match pod template label
+      release: {{ .Release.Name }}                  # Must match pod template label
+
+  template:                                         # Template for the pods to be created
     metadata:
-      labels:
-        app: {{ include "myapp.name" . }}
-        release: {{ .Release.Name }}
-        environment: {{ .Values.env | quote }}
+      labels:                                       # Labels to apply to the pods
+        app: {{ include "myapp.name" . }}           # Same app label as above
+        release: {{ .Release.Name }}                # Same release label
+        environment: {{ .Values.env | quote }}      # Environment label for identifying pods by environment
+
     spec:
-      containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+      containers:                                   # Define containers inside the pod
+        - name: {{ .Chart.Name }}                   # Name of the container (usually same as app or chart)
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Docker image and tag from values.yaml
+          imagePullPolicy: {{ .Values.image.pullPolicy }}  # Image pull policy (e.g., Always, IfNotPresent)
+
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.service.port }}     # Port that the container listens on
+
+          resources:                                        # Resource limits and requests for the container
+            limits:                                         # Maximum resources the container is allowed to use
+              cpu: {{ .Values.resources.limits.cpu | quote }}       # Max CPU (e.g., "500m")
+              memory: {{ .Values.resources.limits.memory | quote }} # Max memory (e.g., "256Mi")
+            requests:                                       # Minimum resources requested for scheduling
+              cpu: {{ .Values.resources.requests.cpu | quote }}     # Requested CPU (e.g., "250m")
+              memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
