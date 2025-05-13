@@ -47,12 +47,3 @@ spec:
               cpu: {{ .Values.resources.requests.cpu | quote }}    # Requested CPU (e.g., "250m")
               memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
 
-      volumes:                                      # Volumes available to containers in the pod
-        - name: nginx-html                          # Volume name referenced in volumeMounts
-          configMap:
-            name: {{ include "myapp.fullname" .}}   # Name of ConfigMap, now valid with "-html" suffix
-
-      volumeMounts:                                  # Mount the configMap volume into the container
-        - name: nginx-html                           # Volume name to mount
-          mountPath: /usr/share/nginx/html            # Path where the content will be mounted in the container
-          subPath: index.html                        # Mount the "index.html" file from the ConfigMap
