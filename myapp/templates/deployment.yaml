@@ -55,4 +55,5 @@ spec:
       volumes:                                              # Volumes available to all containers in the pod
         - name: nginx-html                                  # Volume name referenced in volumeMounts
           configMap:                                        # Source of the volume is a ConfigMap
-            name: {{ include "myapp.fullname"}}     # ConfigMap that contains the custom index.html
+            name: {{ include "myapp.fullname" . | cat "-html" }}  # Corrected ConfigMap name with "-html"
+
