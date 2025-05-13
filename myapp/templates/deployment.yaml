@@ -1,59 +1,58 @@
-apiVersion: apps/v1                                 # Specifies the API version for Deployment
-kind: Deployment                                    # Declares this manifest as a Deployment
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: {{ include "myapp.fullname" . }}            # The full name of the deployment (typically release-name + app name)
-  namespace: {{ .Values.namespace }}                # Namespace to deploy the resources into, from values.yaml
-  labels:                                           # Labels help identify and group resources
-    app: {{ include "myapp.name" . }}               # App label, typically the application name
-    chart: {{ include "myapp.chart" . }}            # Helm chart version label
-    release: {{ .Release.Name }}                    # Helm release name
-    heritage: {{ .Release.Service }}                # Helm service label (used internally by Helm)
-    environment: {{ .Values.env | quote }}          # Custom label to identify the environment (e.g., "dev")
+  name: {{ include "myapp.fullname" . }}           # Full name of the deployment (release-name + app name)
+  namespace: {{ .Values.namespace }}               # Namespace to deploy the resources into
+  labels:
+    app: {{ include "myapp.name" . }}              # Application label
+    chart: {{ include "myapp.chart" . }}           # Helm chart version
+    release: {{ .Release.Name }}                   # Helm release name
+    heritage: {{ .Release.Service }}               # Helm service label
+    environment: {{ .Values.env | quote }}         # Custom label for environment (e.g., "dev")
 
 spec:
-  replicas: {{ .Values.replicaCount }}              # Number of pod replicas to run, defined in values.yaml
-  strategy:                                         # Deployment update strategy
-    type: RollingUpdate                             # Use rolling updates for zero-downtime deployments
+  replicas: {{ .Values.replicaCount }}             # Number of pod replicas to run
+  strategy:                                        # Deployment strategy (RollingUpdate for zero-downtime)
+    type: RollingUpdate                            # Use rolling updates
     rollingUpdate:
-      maxSurge: 25%                                 # Allow 25% more pods than desired during update
-      maxUnavailable: 25%                           # Allow up to 25% of pods to be unavailable during update
+      maxSurge: 25%                                # Allow up to 25% more pods than desired during update
+      maxUnavailable: 25%                          # Allow up to 25% of pods to be unavailable during update
 
-  selector:                                         # How the Deployment finds which Pods to manage
+  selector:                                        # Label selector to match the pods managed by this deployment
     matchLabels:
-      app: {{ include "myapp.name" . }}             # Must match pod template label
-      release: {{ .Release.Name }}                  # Must match pod template label
+      app: {{ include "myapp.name" . }}            # App label
+      release: {{ .Release.Name }}                 # Release label
 
-  template:                                         # Template for the pods to be created
+  template:                                        # Pod template
     metadata:
-      labels:                                       # Labels to apply to the pods
-        app: {{ include "myapp.name" . }}           # Same app label as above
-        release: {{ .Release.Name }}                # Same release label
-        environment: {{ .Values.env | quote }}      # Environment label for identifying pods by environment
+      labels:
+        app: {{ include "myapp.name" . }}          # App label for the pods
+        release: {{ .Release.Name }}               # Release label for the pods
+        environment: {{ .Values.env | quote }}     # Environment label for identifying pods by environment
 
     spec:
-      containers:                                   # Define containers inside the pod
-        - name: {{ .Chart.Name }}                   # Name of the container (usually same as app or chart)
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Docker image and tag from values.yaml
+      containers:                                  # Containers inside the pod
+        - name: {{ .Chart.Name }}                  # Container name (same as app or chart)
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Image repository and tag
           imagePullPolicy: {{ .Values.image.pullPolicy }}  # Image pull policy (e.g., Always, IfNotPresent)
 
           ports:
-            - containerPort: {{ .Values.service.port }}     # Port that the container listens on
+            - containerPort: {{ .Values.service.port }}  # Port the container listens on
 
-          resources:                                        # Resource limits and requests for the container
-            limits:                                         # Maximum resources the container is allowed to use
-              cpu: {{ .Values.resources.limits.cpu | quote }}       # Max CPU (e.g., "500m")
-              memory: {{ .Values.resources.limits.memory | quote }} # Max memory (e.g., "256Mi")
-            requests:                                       # Minimum resources requested for scheduling
-              cpu: {{ .Values.resources.requests.cpu | quote }}     # Requested CPU (e.g., "250m")
+          resources:                                  # Resource limits and requests for the container
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}      # Max CPU (e.g., "500m")
+              memory: {{ .Values.resources.limits.memory | quote }}  # Max memory (e.g., "256Mi")
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}    # Requested CPU (e.g., "250m")
               memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
 
-          volumeMounts:                                    # Mount external files into the container
-            - name: nginx-html                              # Volume name defined below
-              mountPath: /usr/share/nginx/html              # Nginx's default site path
-              readOnly: true                                # Ensure files are not modified by the container
+      volumes:                                      # Volumes available to containers in the pod
+        - name: nginx-html                          # Volume name referenced in volumeMounts
+          configMap:
+            name: {{ include "myapp.fullname"}}   # Name of ConfigMap, now valid with "-html" suffix
 
-      volumes:                                              # Volumes available to all containers in the pod
-        - name: nginx-html                                  # Volume name referenced in volumeMounts
-          configMap:                                        # Source of the volume is a ConfigMap
-            name: {{ include "myapp.fullname" . | cat "-html" }}  # Corrected ConfigMap name with "-html"
-
+      volumeMounts:                                  # Mount the configMap volume into the container
+        - name: nginx-html                           # Volume name to mount
+          mountPath: /usr/share/nginx/html            # Path where the content will be mounted in the container
+          subPath: index.html                        # Mount the "index.html" file from the ConfigMap
