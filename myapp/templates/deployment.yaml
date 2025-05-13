@@ -46,3 +46,13 @@ spec:
             requests:                                       # Minimum resources requested for scheduling
               cpu: {{ .Values.resources.requests.cpu | quote }}     # Requested CPU (e.g., "250m")
               memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
+
+          volumeMounts:                                    # Mount external files into the container
+            - name: nginx-html                              # Volume name defined below
+              mountPath: /usr/share/nginx/html              # Nginx's default site path
+              readOnly: true                                # Ensure files are not modified by the container
+
+      volumes:                                              # Volumes available to all containers in the pod
+        - name: nginx-html                                  # Volume name referenced in volumeMounts
+          configMap:                                        # Source of the volume is a ConfigMap
+            name: {{ include "myapp.fullname"}}     # ConfigMap that contains the custom index.html
