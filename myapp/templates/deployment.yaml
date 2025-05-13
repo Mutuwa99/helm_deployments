@@ -50,7 +50,7 @@ spec:
       volumes:                                      # Volumes available to containers in the pod
         - name: nginx-html                          # Volume name referenced in volumeMounts
           configMap:
-            name: {{ include "myapp.fullname"}}   # Name of ConfigMap, now valid with "-html" suffix
+            name: {{ include "myapp.fullname" .}}   # Name of ConfigMap, now valid with "-html" suffix
 
       volumeMounts:                                  # Mount the configMap volume into the container
         - name: nginx-html                           # Volume name to mount
