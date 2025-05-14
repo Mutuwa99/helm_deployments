@@ -1,153 +1,129 @@
-Here's a `README.md` tailored for your use case: **using Helm to create Kubernetes releases** and **managing them with Argo CD** to handle declarative state reconciliation.
+# By Noble Mutuwa Mulaudzi 
 
 ---
 
-```markdown
-# Kubernetes GitOps Workflow with Helm and Argo CD
+# Helm + Argo CD Deployment Pipeline
 
-This repository demonstrates how to simplify Kubernetes deployments using **Helm** charts while managing and continuously reconciling the desired cluster state using **Argo CD**.
-
-## 🚀 Overview
-
-- ✅ **Helm** is used for templating and packaging Kubernetes manifests.
-- ✅ **Argo CD** is used for GitOps-based deployment and automatic reconciliation of cluster state.
-- ✅ This setup allows combining the flexibility of Helm with the stability of GitOps.
+This repository uses Helm to manage Kubernetes manifests and Argo CD to handle declarative GitOps-based deployments. It supports two environments: `dev` and `prod`. Helm is used to promote reusability of Kubernetes resources—such as deployment manifests, services, and config maps—by templating them. Argo CD then deploys these rendered manifests based on Git branch references, ensuring consistent and traceable environment provisioning.
 
 ---
 
-## 🧱 Project Structure
+## 🔧 Purpose
+
+* We use **Helm only to template Kubernetes manifests**.
+* All actual **deployments are performed by Argo CD including rollbacks through git**.
+
+
+#### The goal is to maintain a clean, consistent, and reproducible deployment pipeline using Git as the single source of truth, made easier by leveraging Helm's powerful templating capabilities for reusability and manageability of Kubernetes resources.
+
+---
+
+## 🌍 Environments
+
+### 1. **Development (`dev`)**
+
+* Deployed via **Argo CD**.
+* Points to the `dev` Git branch.
+* Uses `values-dev.yaml` for customizations.
+* Ideal for testing and early-stage changes.
+
+### 2. **Production (`prod`)**
+
+* Deployed via **Argo CD**.
+* Points to the `main` Git branch.
+* Uses `values-prod.yaml` for production-level settings.
+* Only changes merged into `main` are deployed here.
+
+---
+
+## 🚀 What Gets Deployed
+
+ What Gets Deployed
+* A simple NGINX pod created using Helm templating.
+* A ConfigMap that overwrites the default NGINX index page with a custom HTML page.
+* A Kubernetes Service to expose the NGINX pod internally within the cluster.
+* A ServiceAccount, Role, and RoleBinding to handle scoped access control for the deployed pod.
+* The same Helm chart is reused across environments; differences are managed through environment-specific values.yaml files
+
+---
+
+## 📂 Directory Structure
 
 ```
-
 .
-├── charts/                    # Helm charts
-│   └── myapp/                 # Sample application chart
-│       ├── templates/         # Kubernetes resource templates
-│       ├── values.yaml        # Default Helm values
+.
+├── charts/
+│   └── myapp/
+│       ├── templates/
+│       │   ├── deployment.yaml          # NGINX Deployment
+│       │   ├── configmap.yaml           # Custom index.html ConfigMap
+│       │   ├── service.yaml             # Service to expose the pod
+│       │   ├── serviceaccount.yaml      # Defines a dedicated ServiceAccount
+│       │   ├── role.yaml                # RBAC Role with limited permissions
+│       │   └── rolebinding.yaml         # Binds the Role to the ServiceAccount
+│       ├── values-dev.yaml              # Dev-specific values
+│       ├── values-prod.yaml             # Prod-specific values
+│       └── Chart.yaml                   # Helm chart metadata
 ├── apps/
-│   └── myapp/                 # Argo CD Application definition
-│       └── app.yaml           # Argo CD manifest pointing to Helm chart
-├── environments/
-│   └── dev/
-│       └── values-dev.yaml    # Environment-specific overrides
+│   ├── dev-app.yaml                     # Argo CD Application pointing to the dev branch
+│   └── prod-app.yaml                    # Argo CD Application pointing to the main branch
+└── README.md
 
-````
-
----
-
-## 🔧 Prerequisites
-
-- Kubernetes Cluster
-- Helm CLI installed
-- Argo CD installed and accessible (`argocd-server`)
-- Git repository configured and accessible to Argo CD
-
----
-
-## ⚙️ Setup Steps
-
-### 1. Package and Push Helm Chart (Optional)
-```bash
-helm package charts/myapp
-````
-
-Or you can use raw directories if referencing charts directly in Git.
-
----
-
-### 2. Define Application for Argo CD
-
-Here’s an example `apps/myapp/app.yaml`:
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: myapp
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/your-org/your-repo.git'
-    targetRevision: HEAD
-    path: charts/myapp
-    helm:
-      valueFiles:
-        - environments/dev/values-dev.yaml
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: dev
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
 ```
 
 ---
 
-### 3. Apply the Argo CD Application
+## 🔄 GitOps Flow
+
+### Development
 
 ```bash
-kubectl apply -f apps/myapp/app.yaml
+# Work in dev branch
+git checkout dev
+# Commit changes
+git commit -am "Update nginx config"
+# Push to trigger dev Argo CD sync
+git push origin dev
 ```
 
-Argo CD will:
+### Promotion to Production
 
-* Deploy the app using the Helm chart.
-* Reconcile any drift in configuration automatically (self-healing).
-* Track and sync from Git.
+Here’s the updated **"Promotion to Production"** section with the Pull Request (PR) process included:
 
 ---
 
-## 📦 Benefits
+### 🚀 Promotion to Production
 
-* ✅ **DRY** Kubernetes templates via Helm
-* ✅ **Environment-specific values** for flexibility
-* ✅ **GitOps state management** via Argo CD
-* ✅ **Auditability** — everything is tracked in Git
-* ✅ **Declarative deployments** with live reconciliation
-
----
-
-## 📚 Tips
-
-* Use `values.yaml` for defaults and override with `values-dev.yaml`, `values-prod.yaml`, etc.
-* Enable `automated sync` with `prune + selfHeal` for true GitOps.
-* Manage secrets securely (e.g., use External Secrets Operator or Sealed Secrets).
-
----
-
-## 🔐 Getting Argo CD Admin Password
+Promotion from the **`dev`** environment to **`prod`** happens through a Git-based workflow using a **Pull Request (PR)**. This ensures that all changes are reviewed before going live.
 
 ```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
+# Step 1: Push changes to the dev branch
+git add .
+git commit -m "Update configuration for dev"
+git push origin dev
+
+# Step 2: Open a Pull Request from dev → main
+# (This is reviewed and approved by your team)
+
+# Step 3: Once approved, merge the PR into main
+# This triggers Argo CD to sync and deploy to prod
 ```
 
-Username: `admin`
+> ✅ Argo CD watches the `main` branch for production and `dev` branch for development. Merging to `main` automatically updates the production environment.
+
+
+
 
 ---
 
-## 🧼 Cleanup
+## ✅ Summary
 
-```bash
-kubectl delete -f apps/myapp/app.yaml
-```
-
----
-
-## 🛠 Contributions
-
-Feel free to fork, improve, and submit a PR!
+| Tool             | Purpose                                    |
+| ---------------- | ------------------------------------------ |
+| **Helm**         | Create reusable and customizable templates |
+| **Argo CD**      | Declarative GitOps deployments             |
+| **Git Branches** | `dev` for testing, `main` for production   |
 
 ---
 
-## 📄 License
 
-MIT
-
-```
-
----
-
-Would you like me to generate a real Helm chart template and values files to go with this? ..
-```

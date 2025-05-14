@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/Mutuwa99/helm_deployments.git'
-    targetRevision: main
+    targetRevision: dev
     path: myapp
     helm:
       valueFiles:
