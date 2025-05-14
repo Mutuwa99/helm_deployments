@@ -1,57 +1,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "myapp.fullname" . }}           # Full name of the deployment (release-name + app name)
-  namespace: {{ .Values.namespace }}               # Namespace to deploy the resources into
+  name: {{ include "myapp.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ include "myapp.name" . }}              # Application label
-    chart: {{ include "myapp.chart" . }}           # Helm chart version
-    release: {{ .Release.Name }}                   # Helm release name
-    heritage: {{ .Release.Service }}               # Helm service label
-    environment: {{ .Values.env | quote }}         # Custom label for environment (e.g., "dev")
-
+    app: {{ include "myapp.name" . }}
+    chart: {{ include "myapp.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    environment: {{ .Values.env | quote }}
 spec:
-  replicas: {{ .Values.replicaCount }}             # Number of pod replicas to run
-  strategy:                                        # Deployment strategy (RollingUpdate for zero-downtime)
-    type: RollingUpdate                            # Use rolling updates
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
     rollingUpdate:
-      maxSurge: 25%                                # Allow up to 25% more pods than desired during update
-      maxUnavailable: 25%                          # Allow up to 25% of pods to be unavailable during update
-
-  selector:                                        # Label selector to match the pods managed by this deployment
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
     matchLabels:
-      app: {{ include "myapp.name" . }}            # App label
-      release: {{ .Release.Name }}                 # Release label
-
-  template:                                        # Pod template
+      app: {{ include "myapp.name" . }}
+      release: {{ .Release.Name }}
+  template:
     metadata:
       labels:
-        app: {{ include "myapp.name" . }}          # App label for the pods
-        release: {{ .Release.Name }}               # Release label for the pods
-        environment: {{ .Values.env | quote }}     # Environment label for identifying pods by environment
-
+        app: {{ include "myapp.name" . }}
+        release: {{ .Release.Name }}
+        environment: {{ .Values.env | quote }}
     spec:
-      containers:                                  # Containers inside the pod
-        - name: {{ .Chart.Name }}                  # Container name (same as app or chart)
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Image repository and tag
-          imagePullPolicy: {{ .Values.image.pullPolicy }}  # Image pull policy (e.g., Always, IfNotPresent)
-
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.port }}  # Port the container listens on
-
-          resources:                                  # Resource limits and requests for the container
+            - containerPort: {{ .Values.service.port }}
+          resources:
             limits:
-              cpu: {{ .Values.resources.limits.cpu | quote }}      # Max CPU (e.g., "500m")
-              memory: {{ .Values.resources.limits.memory | quote }}  # Max memory (e.g., "256Mi")
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu | quote }}    # Requested CPU (e.g., "250m")
-              memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
-      volumeMounts:
-        - name: html-volume
-          mountPath: /usr/share/nginx/html
-          readOnly: true
-
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+          volumeMounts:
+            - name: html-volume
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+              readOnly: true
       volumes:
         - name: html-volume
           configMap:
-            name: {{ include "myapp.fullname" . }}
+            name: {{ include "myapp.fullname" . }}  # Ensure the ConfigMap name matches here
