@@ -46,4 +46,12 @@ spec:
             requests:
               cpu: {{ .Values.resources.requests.cpu | quote }}    # Requested CPU (e.g., "250m")
               memory: {{ .Values.resources.requests.memory | quote }} # Requested memory (e.g., "128Mi")
+      volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+          readOnly: true
 
+      volumes:
+        - name: html-volume
+          configMap:
+            name: {{ include "myapp.fullname" . }}
