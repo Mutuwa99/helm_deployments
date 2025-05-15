@@ -29,7 +29,7 @@ resources:
 
 ingress:
   enabled: true
-  host: example.com
+  host: noble-mutuwa.com
 
 certManager:
-  issuerName: letsencrypt-production
+  issuerName: selfsigned
