@@ -20,18 +20,20 @@ This repository uses Helm to manage Kubernetes manifests and Argo CD to handle d
 
 ## 🌍 Environments
 
-### 1. **Development (`dev`)**
+### 1. **Development (`dev`) APP**
 
 * Deployed via **Argo CD**.
+* Deploys to `dev namespace`
 * Points to the `dev` Git branch.
-* Uses `values-dev.yaml` for customizations.
+* Uses `dev-values.yaml` for customizations.
 * Ideal for testing and early-stage changes.
 
 ### 2. **Production (`prod`)**
 
 * Deployed via **Argo CD**.
+* Deploys to `prod namespace`
 * Points to the `main` Git branch.
-* Uses `values-prod.yaml` for production-level settings.
+* Uses `prod-values.yaml` for production-level settings.
 * Only changes merged into `main` are deployed here.
 
 ---
@@ -61,12 +63,12 @@ This repository uses Helm to manage Kubernetes manifests and Argo CD to handle d
 │       │   ├── serviceaccount.yaml      # Defines a dedicated ServiceAccount
 │       │   ├── role.yaml                # RBAC Role with limited permissions
 │       │   └── rolebinding.yaml         # Binds the Role to the ServiceAccount
-│       ├── values-dev.yaml              # Dev-specific values
-│       ├── values-prod.yaml             # Prod-specific values
+│       ├── dev-values.yaml              # Dev-specific values
+│       ├── prod-values.yaml             # Prod-specific values
 │       └── Chart.yaml                   # Helm chart metadata
-├── apps/
-│   ├── dev-app.yaml                     # Argo CD Application pointing to the dev branch
-│   └── prod-app.yaml                    # Argo CD Application pointing to the main branch
+├── argo-apps/
+│   ├── dev-argocd.yaml                     # Argo CD Application pointing to the dev branch
+│   └── prod-argocd.yaml                    # Argo CD Application pointing to the main branch
 └── README.md
 
 ```
@@ -86,9 +88,6 @@ git commit -am "Update nginx config"
 git push origin dev
 ```
 
-### Promotion to Production
-
-Here’s the updated **"Promotion to Production"** section with the Pull Request (PR) process included:
 
 ---
 
