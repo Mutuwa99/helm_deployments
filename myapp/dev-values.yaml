@@ -33,6 +33,6 @@ ingress:
   host: dev.example.com
 
 certManager:
-  issuerName: letsencrypt-staging
+  issuerName: selfsigned
 
 
