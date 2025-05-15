@@ -31,6 +31,8 @@ resources:
 ingress:
   enabled: true
   host: dev.example.com
-  tlsSecret: example-dev-tls
+
+certManager:
+  issuerName: letsencrypt-staging
 
 

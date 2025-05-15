@@ -30,4 +30,6 @@ resources:
 ingress:
   enabled: true
   host: example.com
-  tlsSecret: example-prod-tls
+
+certManager:
+  issuerName: letsencrypt-production
