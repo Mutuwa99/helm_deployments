@@ -10,7 +10,8 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: NodePort
+  name: myapp-prod
+  type: ClusterIP
   targetPort: 80
   port: 80
 
@@ -24,3 +25,9 @@ resources:
   requests:
     cpu: "250m"                     # Minimum amount of CPU requested (used for scheduling)
     memory: "128Mi"                 # Minimum memory requested (used for scheduling).
+
+
+ingress:
+  enabled: true
+  host: example.com
+  tlsSecret: example-prod-tls
