@@ -45,7 +45,7 @@ data:
     </head>
     <body>
       <div class="container">
-        <h1>Welcome .to Noble's {{ .Values.env | title }} Environment!</h1>
+        <h1>Welcome  .to FNB demo  {{ .Values.env | title }} Environment!</h1>
         <p>This page is proudly powered by . <span class="highlight">Noble</span>, your friendly DevOps engineer!</p>
         <p>   .</p>
         <div class="footer">
