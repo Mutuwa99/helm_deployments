@@ -25,7 +25,7 @@ resources:
 
   requests:
     cpu: "250m"                     # Minimum amount of CPU requested (used for scheduling)
-    memory: "128Mi"                 # Minimum memory requested (used for scheduling)
+    memory: "what is MI"                 # Minimum memory requested (used for scheduling)
 
 
 ingress:
