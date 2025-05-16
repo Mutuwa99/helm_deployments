@@ -6,9 +6,8 @@ metadata:
 spec:
   secretName: {{ .Release.Name }}
   dnsNames:
-    - {{ .Values.ingress.host }}
-  duration: 2160h        # 90 days
-  renewBefore: 360h      # 15 days before expiry.
+  - {{ .Values.ingress.host }}
+  
   issuerRef:
     name: {{ .Values.certManager.issuerName }}
     kind: ClusterIssuer
