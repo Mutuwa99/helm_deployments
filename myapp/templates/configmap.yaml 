@@ -57,9 +57,9 @@ data:
         <p>Deployed with ArgoCD and Helm</p>
         <p><b>Main Components</b></p>
         <ul class="uls"> 
-          <li>Helm :Used to promote reusability of Kubernetes resources  </li>
-          <li>ArgoCD :Handle declarative GitOps-based deployments & rollbacks </li>
-          <li> Certificate Manager :It automates the issuance, renewal, and management of TLS certificates.</li>
+          <li> <b> Helm </b> :Used to promote reusability of Kubernetes resources  </li>
+          <li> <b> ArgoCD </b>:Handle declarative GitOps-based deployments & rollbacks </li>
+          <li> <b> Certificate Manager </b> :It automates the issuance, renewal, and management of TLS certificates.</li>
 
         </ul>
         <p>This page is proudly powered by <span class="highlight">Noble</span>, your friendly DevOps engineer!</p>
