@@ -29,9 +29,13 @@ data:
           border-radius: 10px;
           box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
         }
-        .uls{
-          align-items:center;
-          text-align: center;
+        .uls {
+          list-style: none;
+          padding: 0;
+          margin: 10px 0;
+        }
+        .uls li {
+          margin: 5px 0;
         }
         h1 {
           color: #004e8c;
@@ -49,18 +53,19 @@ data:
     </head>
     <body>
       <div class="container">
-        <h1>Welcome to Noble's  {{ .Values.env | title }} Kurbenetes  Environment!</h1>
-        <p> Deployed with ArgoCD and Helm  </p>
-        <p> <b> Main Components </b> </P>
+        <h1>Welcome to Noble's {{ .Values.env | title }} Kubernetes Environment!</h1>
+        <p>Deployed with ArgoCD and Helm</p>
+        <p><b>Main Components</b></p>
         <ul class="uls"> 
-          <li> Helm</li>
-          <li> Argocd </li>
-          <li> Minikube </li>
+          <li>Helm </li>
+          <li>ArgoCD </li>
+          <li>Minikube </li>
+          <li> Certificate Manager </li>
+          
         </ul>
-        <p>This page is proudly powered by . <span class="highlight">Noble</span>, your friendly DevOps engineer!</p>
-        <p>   .</p>
+        <p>This page is proudly powered by <span class="highlight">Noble</span>, your friendly DevOps engineer!</p>
         <div class="footer">
-          <p>DevOps| Managed by Noble</p>
+          <p>DevOps | Managed by Noble</p>
         </div>
       </div>
     </body>
