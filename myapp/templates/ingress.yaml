@@ -10,6 +10,7 @@ spec:
     - hosts:
         - {{ .Values.ingress.host }}
       secretName: {{ .Release.Name }}
+      
 
   rules:
     - host: {{ .Values.ingress.host }}
