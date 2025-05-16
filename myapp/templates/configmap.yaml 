@@ -45,7 +45,14 @@ data:
     </head>
     <body>
       <div class="container">
-        <h1>Welcome  Noble's  {{ .Values.env | title }} Kurbenetes  Environment!</h1>
+        <h1>Welcome to Noble's  {{ .Values.env | title }} Kurbenetes  Environment!</h1>
+        <p> Deployed with ArgoCD and Helm  </p>
+        <p> <b> Main Components </b> </P>
+        <ul> 
+          <li> Helm</li>
+          <li> Argocd </li>
+          <li> Minikube </li>
+        </ul>
         <p>This page is proudly powered by . <span class="highlight">Noble</span>, your friendly DevOps engineer!</p>
         <p>   .</p>
         <div class="footer">
