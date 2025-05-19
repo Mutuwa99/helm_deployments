@@ -53,7 +53,7 @@ data:
     </head>
     <body>
       <div class="container">
-        <h1>Welcome to Noble's FNB DEMO in  {{ .Values.env | title }} Kubernetes Environment!</h1>
+        <h1>Welcome to Noble's   {{ .Values.env | title }} Kubernetes Environment!</h1>
         <p>Deployed with ArgoCD and Helm</p>
         <p><b>Main Components</b></p>
         <ul class="uls"> 
