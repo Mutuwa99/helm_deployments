@@ -2,7 +2,7 @@
 
 namespace: dev                      # The Kubernetes namespace where the resources will be deployed
 
-replicaCount: 4                     # Number of pod replicas to run
+replicaCount: 2                     # Number of pod replicas to run
 
 env: dev                            # Environment label (used for tagging pods, e.g., dev, staging, prod)
 
